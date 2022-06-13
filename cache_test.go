@@ -13,7 +13,7 @@ func TestMain(m *testing.M) {
 }
 
 func mockCache(ops ...ICacheOption[int]) ICache[int] {
-	c := NewMemCache[int](ops...)
+	c := NewMemCache(ops...)
 	c.Set("int", 1)
 	c.Set("ex", 1, WithEx[int](1*time.Second))
 	return c
