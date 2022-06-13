@@ -3,11 +3,11 @@ package cache
 import "time"
 
 // SetIOption The option used to cache set
-type SetIOption[V any] func(*memCache[V], string, IItem) bool
+type SetIOption[V any] func(ICache[V], string, IItem) bool
 
 //WithEx Set the specified expire time, in time.Duration.
 func WithEx[V any](d time.Duration) SetIOption[V] {
-	return func(c *memCache[V], k string, v IItem) bool {
+	return func(c ICache[V], k string, v IItem) bool {
 		v.SetExpireAt(time.Now().Add(d))
 		return true
 	}
@@ -15,7 +15,7 @@ func WithEx[V any](d time.Duration) SetIOption[V] {
 
 //WithExAt Set the specified expire deadline, in time.Time.
 func WithExAt[V any](t time.Time) SetIOption[V] {
-	return func(c *memCache[V], k string, v IItem) bool {
+	return func(c ICache[V], k string, v IItem) bool {
 		v.SetExpireAt(t)
 		return true
 	}

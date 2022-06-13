@@ -12,7 +12,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func mockCache(ops ...ICacheOption[int]) *MemCache[int] {
+func mockCache(ops ...ICacheOption[int]) ICache[int] {
 	c := NewMemCache[int](ops...)
 	c.Set("int", 1)
 	c.Set("ex", 1, WithEx[int](1*time.Second))
@@ -56,8 +56,6 @@ func TestMemCache_Del(t *testing.T) {
 		want int
 	}{
 		{name: "int", args: args{ks: []string{"int"}}, want: 1},
-		{name: "int32,int64", args: args{ks: []string{"int32", "int64"}}, want: 2},
-		{name: "string,null", args: args{ks: []string{"string", "null"}}, want: 1},
 		{name: "null", args: args{ks: []string{"null"}}, want: 0},
 	}
 	c := mockCache()
@@ -80,7 +78,6 @@ func TestMemCache_Exists(t *testing.T) {
 		want bool
 	}{
 		{name: "int", args: args{ks: []string{"int"}}, want: true},
-		{name: "int32,int64", args: args{ks: []string{"int32", "int64"}}, want: true},
 		{name: "int64,null", args: args{ks: []string{"int64", "null"}}, want: false},
 		{name: "null", args: args{ks: []string{"null"}}, want: false},
 	}
@@ -105,7 +102,6 @@ func TestMemCache_Expire(t *testing.T) {
 		want bool
 	}{
 		{name: "int", args: args{k: "int", d: 1 * time.Second}, want: true},
-		{name: "int32", args: args{k: "int32", d: 1 * time.Second}, want: true},
 		{name: "null", args: args{k: "null", d: 1 * time.Second}, want: false},
 	}
 	c := mockCache()
@@ -129,7 +125,6 @@ func TestMemCache_ExpireAt(t *testing.T) {
 		want bool
 	}{
 		{name: "int", args: args{k: "int", t: time.Now().Add(1 * time.Second)}, want: true},
-		{name: "int32", args: args{k: "int32", t: time.Now().Add(1 * time.Second)}, want: true},
 		{name: "null", args: args{k: "null", t: time.Now().Add(1 * time.Second)}, want: false},
 	}
 	c := mockCache()
@@ -210,7 +205,6 @@ func TestMemCache_GetSet(t *testing.T) {
 	}{
 		{name: "int", args: args{k: "int", v: 0}, want: 1, want1: true},
 		{name: "int", args: args{k: "int", v: 1}, want: 0, want1: true},
-		{name: "null", args: args{k: "null", v: 0}, want: 1, want1: true},
 	}
 	c := mockCache()
 	for _, tt := range tests {
@@ -363,7 +357,7 @@ func TestMemCache_Finalize(t *testing.T) {
 	mc := NewMemCache[int]()
 	mc.Set("a", 1)
 	mc.Set("b", 1, WithEx[int](1*time.Nanosecond))
-	closed := mc.closed
+	closed := mc.(*MemCache[int]).closed
 	mc = nil
 	runtime.GC()
 	for _, tt := range tests {
