@@ -7,12 +7,12 @@ import (
 
 // ExpiredCallback Callback the function when the key-value pair expires
 // Note that it is executed after expiration
-type ExpiredCallback func(k string, v interface{}) error
+type ExpiredCallback[V any] func(k string, v V) error
 
 type memCacheShard[V any] struct {
 	hashmap         map[string]Item[V]
 	lock            sync.RWMutex
-	expiredCallback ExpiredCallback
+	expiredCallback ExpiredCallback[V]
 }
 
 func newMemCacheShard[V any](conf *Config) *memCacheShard[V] {
