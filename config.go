@@ -2,13 +2,13 @@ package cache
 
 import "time"
 
-type Config struct {
+type Config[V any] struct {
 	shards          int
-	expiredCallback ExpiredCallback
+	expiredCallback ExpiredCallback[V]
 	hash            IHash
 	clearInterval   time.Duration
 }
 
-func NewConfig() *Config {
-	return &Config{shards: 1024, hash: newDefaultHash(), clearInterval: 10 * time.Minute}
+func NewConfig[V any]() *Config[V] {
+	return &Config[V]{shards: 1024, hash: newDefaultHash(), clearInterval: 10 * time.Minute}
 }

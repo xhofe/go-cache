@@ -12,7 +12,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func mockCache(ops ...ICacheOption) *MemCache[int] {
+func mockCache(ops ...ICacheOption[int]) *MemCache[int] {
 	c := NewMemCache[int](ops...)
 	c.Set("int", 1)
 	c.Set("ex", 1, WithEx[int](1*time.Second))
@@ -343,7 +343,7 @@ func TestMemCache_DelExpired(t *testing.T) {
 		{name: "ex1", args: args{k: "ex", sleep: 1000 * time.Millisecond}, want: true},
 		{name: "null", args: args{k: "null"}, want: false},
 	}
-	c := mockCache(WithClearInterval(1 * time.Minute))
+	c := mockCache(WithClearInterval[int](1 * time.Minute))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			time.Sleep(tt.args.sleep)

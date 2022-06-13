@@ -15,7 +15,7 @@ type memCacheShard[V any] struct {
 	expiredCallback ExpiredCallback[V]
 }
 
-func newMemCacheShard[V any](conf *Config) *memCacheShard[V] {
+func newMemCacheShard[V any](conf *Config[V]) *memCacheShard[V] {
 	return &memCacheShard[V]{
 		expiredCallback: conf.expiredCallback,
 		hashmap:         map[string]Item[V]{},

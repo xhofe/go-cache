@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func NewMemCache[V any](opts ...ICacheOption) *MemCache[V] {
-	conf := NewConfig()
+func NewMemCache[V any](opts ...ICacheOption[V]) *MemCache[V] {
+	conf := NewConfig[V]()
 	for _, opt := range opts {
 		opt(conf)
 	}
@@ -53,7 +53,7 @@ type memCache[V any] struct {
 	shards    []*memCacheShard[V]
 	hash      IHash
 	shardMask uint64
-	config    *Config
+	config    *Config[V]
 	closed    chan struct{}
 }
 

@@ -22,31 +22,31 @@ func WithExAt[V any](t time.Time) SetIOption[V] {
 }
 
 // ICacheOption The option used to create the cache object
-type ICacheOption func(conf *Config)
+type ICacheOption[V any] func(conf *Config[V])
 
 //WithShards set custom size of sharding. Default is 1024
 //The larger the size, the smaller the lock force, the higher the concurrency performance,
 //and the higher the memory footprint, so try to choose a size that fits your business scenario
-func WithShards(shards int) ICacheOption {
+func WithShards[V any](shards int) ICacheOption[V] {
 	if shards <= 0 {
 		panic("Invalid shards")
 	}
-	return func(conf *Config) {
+	return func(conf *Config[V]) {
 		conf.shards = shards
 	}
 }
 
 //WithExpiredCallback set custom expired callback function
 //This callback function is called when the key-value pair expires
-func WithExpiredCallback(ec ExpiredCallback) ICacheOption {
-	return func(conf *Config) {
+func WithExpiredCallback[V any](ec ExpiredCallback[V]) ICacheOption[V] {
+	return func(conf *Config[V]) {
 		conf.expiredCallback = ec
 	}
 }
 
 //WithHash set custom hash key function
-func WithHash(hash IHash) ICacheOption {
-	return func(conf *Config) {
+func WithHash[V any](hash IHash) ICacheOption[V] {
+	return func(conf *Config[V]) {
 		conf.hash = hash
 	}
 }
@@ -54,8 +54,8 @@ func WithHash(hash IHash) ICacheOption {
 //WithClearInterval set custom clear interval.
 //Interval for clearing expired key-value pairs. The default value is 1 second
 //If the d is 0, the periodic clearing function is disabled
-func WithClearInterval(d time.Duration) ICacheOption {
-	return func(conf *Config) {
+func WithClearInterval[V any](d time.Duration) ICacheOption[V] {
+	return func(conf *Config[V]) {
 		conf.clearInterval = d
 	}
 }
