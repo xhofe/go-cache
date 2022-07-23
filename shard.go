@@ -74,6 +74,13 @@ func (c *memCacheShard[V]) del(k string) int {
 	return count
 }
 
+// clear all
+func (c *memCacheShard[V]) clear() {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	c.hashmap = map[string]Item[V]{}
+}
+
 //delExpired Only delete when key expires
 func (c *memCacheShard[V]) delExpired(k string) bool {
 	c.lock.Lock()

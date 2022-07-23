@@ -85,6 +85,8 @@ type ICache[T any] interface {
 	//c.Set("demo", "1", WithEx[string](10*time.Second))
 	//c.Ttl("demo") // 10*time.Second,true
 	Ttl(k string) (time.Duration, bool)
+	// Clear all the keys
+	Clear()
 }
 
 func NewMemCache[V any](opts ...ICacheOption[V]) ICache[V] {
@@ -225,4 +227,10 @@ func (c *memCache[V]) Ttl(k string) (time.Duration, bool) {
 
 func (c *memCache[V]) getShard(hashedKey uint64) (shard *memCacheShard[V]) {
 	return c.shards[hashedKey&c.shardMask]
+}
+
+func (c *memCache[V]) Clear() {
+	for _, s := range c.shards {
+		s.clear()
+	}
 }

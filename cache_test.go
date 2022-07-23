@@ -1,9 +1,11 @@
 package cache
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"runtime"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -363,6 +365,21 @@ func TestMemCache_Finalize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Log(<-closed)
+		})
+	}
+}
+
+func TestMemCache_Clear(t *testing.T) {
+	c := mockCache()
+	for i := 0; i < 100; i++ {
+		c.Set(strconv.Itoa(i), i)
+	}
+	c.Clear()
+	for i := 0; i < 100; i++ {
+		t.Run(fmt.Sprintf("%d_cleared", i), func(t *testing.T) {
+			if _, ok := c.Get(strconv.Itoa(i)); ok {
+				t.Errorf("Get() = %v, want %v", ok, false)
+			}
 		})
 	}
 }
