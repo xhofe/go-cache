@@ -105,23 +105,22 @@ func NewMemCache[V any](opts ...ICacheOption[V]) ICache[V] {
 	for i := 0; i < conf.shards; i++ {
 		c.shards[i] = newMemCacheShard(conf)
 	}
-	go func() {
-		if conf.clearInterval <= 0 {
-			return
-		}
-		ticker := time.NewTicker(conf.clearInterval)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ticker.C:
-				for _, shard := range c.shards {
-					shard.checkExpire()
+	if conf.clearInterval > 0 {
+		go func() {
+			ticker := time.NewTicker(conf.clearInterval)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ticker.C:
+					for _, shard := range c.shards {
+						shard.checkExpire()
+					}
+				case <-c.closed:
+					return
 				}
-			case <-c.closed:
-				return
 			}
-		}
-	}()
+		}()
+	}
 	cache := &MemCache[V]{c}
 	// Associated finalizer function with obj.
 	// When the obj is unreachable, close the obj.
